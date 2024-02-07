@@ -1,36 +1,56 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('users', {
+  return sequelize.define('products', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
+    store_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'stores',
+        key: 'id'
+      }
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    email: {
-      type: DataTypes.STRING(100),
-      allowNull: true
+    price: {
+      type: DataTypes.DOUBLE,
+      allowNull: false
     },
-    phone: {
-      type: DataTypes.STRING(13),
-      allowNull: true
-    },
-    address: {
+    unit_name: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    password: {
+    category_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    category_name: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    verified: {
-      type: DataTypes.TINYINT,
+    image: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    stock: {
+      type: DataTypes.FLOAT,
+      allowNull: true
+    },
+    type: {
+      type: DataTypes.ENUM('regular','recommended','best seller','promo'),
       allowNull: false,
-      defaultValue: 0
+      defaultValue: "regular"
+    },
+    status: {
+      type: DataTypes.ENUM('available','warning','empty'),
+      allowNull: false
     },
     created_on: {
       type: DataTypes.DATE,
@@ -47,7 +67,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'users',
+    tableName: 'products',
     timestamps: false,
     indexes: [
       {
@@ -56,6 +76,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "store_id",
+        using: "BTREE",
+        fields: [
+          { name: "store_id" },
         ]
       },
     ]

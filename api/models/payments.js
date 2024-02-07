@@ -1,36 +1,44 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('users', {
+  return sequelize.define('payments', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
+    store_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'stores',
+        key: 'id'
+      }
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    email: {
-      type: DataTypes.STRING(100),
-      allowNull: true
-    },
-    phone: {
-      type: DataTypes.STRING(13),
-      allowNull: true
-    },
-    address: {
+    account_number: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    password: {
+    account_name: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    verified: {
-      type: DataTypes.TINYINT,
+    qrcode: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    type: {
+      type: DataTypes.ENUM('bank','ewallet'),
+      allowNull: true
+    },
+    status: {
+      type: DataTypes.ENUM('active','suspend','nonactive'),
       allowNull: false,
-      defaultValue: 0
+      defaultValue: "active"
     },
     created_on: {
       type: DataTypes.DATE,
@@ -40,14 +48,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    deleted: {
+    dele: {
       type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0
     }
   }, {
     sequelize,
-    tableName: 'users',
+    tableName: 'payments',
     timestamps: false,
     indexes: [
       {
@@ -56,6 +64,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "store_id",
+        using: "BTREE",
+        fields: [
+          { name: "store_id" },
         ]
       },
     ]

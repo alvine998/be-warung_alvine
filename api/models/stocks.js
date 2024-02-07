@@ -1,36 +1,39 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('users', {
+  return sequelize.define('stocks', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    name: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    email: {
-      type: DataTypes.STRING(100),
-      allowNull: true
-    },
-    phone: {
-      type: DataTypes.STRING(13),
-      allowNull: true
-    },
-    address: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    password: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    verified: {
-      type: DataTypes.TINYINT,
+    product_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0
+      references: {
+        model: 'products',
+        key: 'id'
+      }
+    },
+    product_name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    product_last_stock: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    date: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    total: {
+      type: DataTypes.FLOAT,
+      allowNull: false
+    },
+    status: {
+      type: DataTypes.ENUM('in','out'),
+      allowNull: false
     },
     created_on: {
       type: DataTypes.DATE,
@@ -47,7 +50,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'users',
+    tableName: 'stocks',
     timestamps: false,
     indexes: [
       {
@@ -56,6 +59,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "product_id",
+        using: "BTREE",
+        fields: [
+          { name: "product_id" },
         ]
       },
     ]

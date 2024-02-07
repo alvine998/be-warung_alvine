@@ -14,7 +14,7 @@ exports.list = async (req, res) => {
         const result = await users.findAll({
             where: {
                 deleted: { [Op.eq]: 0 },
-                app_id: {[Op.eq]: req.header('x-app-id')},
+                ...req.query.app_id && { app_id: { [Op.eq]: req.header('x-app-id') } },
                 ...req.query.search && {
                     [Op.or]: [
                         { name: { [Op.like]: `%${req.query.search}%` } },
@@ -25,7 +25,7 @@ exports.list = async (req, res) => {
                 ...req.query.role && { role: { [Op.eq]: req.query.role } },
             },
             order: [
-                ['created_on', 'DESC'],
+                ['created_at', 'DESC'],
             ],
             limit: size
         })

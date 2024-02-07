@@ -20,11 +20,13 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.users = require("./users.js")(sequelize, Sequelize);
-db.customers = require("./customers.js")(sequelize, Sequelize);
-db.apps = require("./apps.js")(sequelize, Sequelize);
-// db.prices = require("./prices.js")(sequelize, Sequelize);
-// db.stocks = require("./stocks.js")(sequelize, Sequelize);
-// db.transactions = require("./transactions.js")(sequelize, Sequelize);
-// db.categories = require("./categories.js")(sequelize, Sequelize);
+db.stores = require("./stores.js")(sequelize, Sequelize);
+db.products = require("./products.js")(sequelize, Sequelize);
+db.transactions = require("./transactions.js")(sequelize, Sequelize);
+db.detail_transactions = require("./detail_transactions.js")(sequelize, Sequelize);
+db.categories = require("./categories.js")(sequelize, Sequelize);
+db.stocks = require("./stocks.js")(sequelize, Sequelize);
+db.payments = require("./payments.js")(sequelize, Sequelize);
+db.domains = require("./domains.js")(sequelize, Sequelize);
 
 module.exports = db;

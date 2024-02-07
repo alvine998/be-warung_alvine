@@ -5,7 +5,7 @@ const app = express();
 require('dotenv').config();
 
 var corsOptions = {
-    origin: "http://localhost:8081"
+    origin: '*'
 };
 
 app.use(cors(corsOptions));
@@ -20,13 +20,21 @@ db.sequelize.sync()
 
 // parse requests of content-type - application/json
 app.use(express.json());
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    next();
+});
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to Midlands" });
+    res.json({ message: "Welcome to API Warung Alvine" });
 });
 require('./api/routes')(app);
 
