@@ -6,6 +6,12 @@ exports.middlewareHere = async (req, res, next) => {
                 code: 401
             })
         }
+        if(!req.header('x-store-id')){
+            return res.status(401).send({
+                message: "Masukkan Asal Tokomu!",
+                code: 401
+            })
+        }
         next()
     } catch (error) {
         console.log(error);

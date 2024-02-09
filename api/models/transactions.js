@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('transactions', {
     id: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -67,6 +68,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.ENUM('waiting','process','delivery','success','cancel'),
       allowNull: true
     },
+    status: {
+      type: DataTypes.ENUM('unpaid','paid','hold'),
+      allowNull: false
+    },
     created_on: {
       type: DataTypes.DATE,
       allowNull: false
@@ -85,6 +90,14 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'transactions',
     timestamps: false,
     indexes: [
+      {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "id" },
+        ]
+      },
       {
         name: "store_id",
         using: "BTREE",

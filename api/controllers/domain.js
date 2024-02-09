@@ -1,6 +1,6 @@
 
 const db = require('../models')
-const categories = db.categories
+const domains = db.domains
 const Op = db.Sequelize.Op
 require('dotenv').config()
 
@@ -10,13 +10,14 @@ exports.list = async (req, res) => {
         const query = req.query
         const size = +query.size || 10;
         const offset = query.page ? +query.page * +size : 0;
-        const { rows, count } = await categories.findAndCountAll({
+        const { rows, count } = await domains.findAndCountAll({
             where: {
                 deleted: { [Op.eq]: 0 },
                 store_id: { [Op.eq]: req.header('x-store-id') },
+                ...query.status && { status: { [Op.in]: query.status } },
                 ...query.search && {
                     [Op.or]: [
-                        { name: { [Op.like]: `%${query.search}%` } },
+                        { url: { [Op.like]: `%${query.search}%` } },
                     ]
                 },
             },
@@ -46,7 +47,7 @@ exports.create = async (req, res) => {
         const payload = {
             ...req.body,
         };
-        const result = await categories.create(payload)
+        const result = await domains.create(payload)
         return res.status(200).send({
             status: "success",
             items: result,
@@ -61,7 +62,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const result = await categories.findOne({
+        const result = await domains.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
@@ -73,13 +74,13 @@ exports.update = async (req, res) => {
         const payload = {
             ...req.body,
         }
-        const onUpdate = await categories.update(payload, {
+        const onUpdate = await domains.update(payload, {
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
             }
         })
-        const results = await categories.findOne({
+        const results = await domains.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
@@ -96,7 +97,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        const result = await categories.findOne({
+        const result = await domains.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.query.id }

@@ -15,6 +15,10 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
+    code: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false
