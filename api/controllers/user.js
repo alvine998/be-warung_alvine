@@ -97,7 +97,7 @@ exports.login = async (req, res) => {
                 user_id: { [Op.eq]: existUsers.id },
             }
         })
-        if(existToken){
+        if (existToken) {
             existToken.deleted = 1
             await existToken.save()
         }
@@ -140,7 +140,7 @@ exports.update = async (req, res) => {
         const result = await users.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.body.id }
+                id: { [Op.eq]: req.header('x-user-id') }
             }
         })
         if (!result) {
@@ -150,19 +150,17 @@ exports.update = async (req, res) => {
             ...req.body,
             ...req.body.password && { password: bcrypt.hashSync(req.body.password, 8) }
         }
+        if(req.body.email !== result.email){
+            result.verified = 0
+            await result.save();
+        }
         const onUpdate = await users.update(payload, {
             where: {
                 deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.body.id }
+                id: { [Op.eq]: req.header('x-user-id') }
             }
         })
-        const results = await users.findOne({
-            where: {
-                deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.body.id }
-            }
-        })
-        res.status(200).send({ message: "Berhasil ubah data", result: results, update: onUpdate })
+        res.status(200).send({ message: "Berhasil ubah data" })
         return
     } catch (error) {
         return res.status(500).send({ message: "Gagal mendapatkan data admin", error: error })
