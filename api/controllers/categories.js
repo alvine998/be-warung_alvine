@@ -23,6 +23,9 @@ exports.list = async (req, res) => {
             order: [
                 ['created_on', 'DESC'],
             ],
+            attributes: {
+                exclude: ['modified_on', 'deleted']
+            },
             limit: size,
             offset: offset
         })

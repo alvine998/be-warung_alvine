@@ -28,5 +28,6 @@ db.categories = require("./categories.js")(sequelize, Sequelize);
 db.stocks = require("./stocks.js")(sequelize, Sequelize);
 db.payments = require("./payments.js")(sequelize, Sequelize);
 db.domains = require("./domains.js")(sequelize, Sequelize);
+db.sessions = require("./sessions.js")(sequelize, Sequelize);
 
 module.exports = db;

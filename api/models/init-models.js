@@ -4,6 +4,7 @@ var _detail_transactions = require("./detail_transactions");
 var _domains = require("./domains");
 var _payments = require("./payments");
 var _products = require("./products");
+var _sessions = require("./sessions");
 var _stocks = require("./stocks");
 var _stores = require("./stores");
 var _transactions = require("./transactions");
@@ -15,6 +16,7 @@ function initModels(sequelize) {
   var domains = _domains(sequelize, DataTypes);
   var payments = _payments(sequelize, DataTypes);
   var products = _products(sequelize, DataTypes);
+  var sessions = _sessions(sequelize, DataTypes);
   var stocks = _stocks(sequelize, DataTypes);
   var stores = _stores(sequelize, DataTypes);
   var transactions = _transactions(sequelize, DataTypes);
@@ -34,6 +36,8 @@ function initModels(sequelize) {
   stores.hasMany(products, { as: "products", foreignKey: "store_id"});
   transactions.belongsTo(stores, { as: "store", foreignKey: "store_id"});
   stores.hasMany(transactions, { as: "transactions", foreignKey: "store_id"});
+  sessions.belongsTo(users, { as: "user", foreignKey: "user_id"});
+  users.hasMany(sessions, { as: "sessions", foreignKey: "user_id"});
   stores.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(stores, { as: "stores", foreignKey: "user_id"});
   transactions.belongsTo(users, { as: "user", foreignKey: "user_id"});
@@ -45,6 +49,7 @@ function initModels(sequelize) {
     domains,
     payments,
     products,
+    sessions,
     stocks,
     stores,
     transactions,
