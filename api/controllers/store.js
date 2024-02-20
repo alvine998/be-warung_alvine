@@ -1,6 +1,7 @@
 
 const db = require('../models')
 const stores = db.stores
+const tUser = db.users
 const Op = db.Sequelize.Op
 require('dotenv').config()
 
@@ -13,6 +14,7 @@ exports.list = async (req, res) => {
         const { rows, count } = await stores.findAndCountAll({
             where: {
                 deleted: { [Op.eq]: 0 },
+                ...query.id && { id: { [Op.eq]: query.id } },
                 ...query.user_id && { user_id: { [Op.eq]: query.user_id } },
                 ...query.status && { status: { [Op.in]: query.status } },
                 ...query.search && {
@@ -48,8 +50,25 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
+        // Validasi
+        ["user_id", "name", "longitude", "latitude", "type"]?.map(val => {
+            if (!req.body[val]) {
+                return res.status(404).send({ message: `Parameter tidak lengkap ${val}` })
+            }
+        })
+        const existUser = await tUser.findOne({
+            where: {
+                deleted: { [Op.eq]: 0 },
+                id: { [Op.eq]: req.body.user_id }
+            }
+        })
+        if (!existUser) {
+            return res.status(404).send({ message: "Data user tidak ditemukan!" })
+        }
         const payload = {
             ...req.body,
+            user_id: existUser.id,
+            user_name: existUser.name
         };
         const result = await stores.create(payload)
         return res.status(200).send({
@@ -84,13 +103,7 @@ exports.update = async (req, res) => {
                 id: { [Op.eq]: req.body.id }
             }
         })
-        const results = await stores.findOne({
-            where: {
-                deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.body.id }
-            }
-        })
-        res.status(200).send({ message: "Berhasil ubah data", result: results, update: onUpdate })
+        res.status(200).send({ message: "Berhasil ubah data" })
         return
     } catch (error) {
         console.log(error);

@@ -56,10 +56,10 @@ module.exports = (app) => {
     app.delete('/detail/transaction', middlewareHere, detail_transaction.delete);
 
     // Store
-    app.get('/stores', middlewareHere, store.list);
-    app.post('/store', middlewareHere, store.create);
-    app.patch('/store', middlewareHere, store.update);
-    app.delete('/store', middlewareHere, store.delete);
+    app.get('/stores', middlewareNonStore, store.list);
+    app.post('/store', middlewareNonStore, store.create);
+    app.patch('/store', middlewareNonStore, store.update);
+    app.delete('/store', middlewareNonStore, store.delete);
 
     // Domain
     app.get('/domains', middlewareHere, domain.list);

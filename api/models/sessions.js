@@ -23,6 +23,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: false
     },
+    expired_on: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     created_on: {
       type: DataTypes.DATE,
       allowNull: false,

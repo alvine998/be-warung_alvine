@@ -7,6 +7,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
+    code_name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false
@@ -23,9 +27,22 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: false
     },
+    latitude: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    longitude: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    type: {
+      type: DataTypes.ENUM('grocery','electronic','phone','vegetable','meat','toy','other'),
+      allowNull: false
+    },
     status: {
       type: DataTypes.ENUM('active','suspend','nonactive'),
-      allowNull: false
+      allowNull: false,
+      defaultValue: "active"
     },
     created_on: {
       type: DataTypes.DATE,

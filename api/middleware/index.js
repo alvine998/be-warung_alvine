@@ -1,6 +1,7 @@
 const db = require('../models')
 const tSession = db.sessions
 const Op = db.Sequelize.Op
+const moment = require('moment')
 exports.middlewareHere = async (req, res, next) => {
     try {
         const result = await tSession.findOne({
@@ -18,6 +19,12 @@ exports.middlewareHere = async (req, res, next) => {
         if (req.header('x-access-token') !== result?.access_token) {
             return res.status(401).send({
                 message: "Access Denied, access token not registered!",
+                code: 401
+            })
+        }
+        if (moment().format("YYYY-MM-DD HH:mm:ss") > result?.expired_on) {
+            return res.status(401).send({
+                message: "Token Expired!",
                 code: 401
             })
         }
@@ -50,6 +57,12 @@ exports.middlewareNonStore = async (req, res, next) => {
         if (req.header('x-access-token') !== result?.access_token) {
             return res.status(401).send({
                 message: "Access Denied, access token not registered!",
+                code: 401
+            })
+        }
+        if (moment().format("YYYY-MM-DD HH:mm:ss") > moment(result.expired_on).format("YYYY-MM-DD HH:mm:ss")) {
+            return res.status(401).send({
+                message: "Token Expired!",
                 code: 401
             })
         }

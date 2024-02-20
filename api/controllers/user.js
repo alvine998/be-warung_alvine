@@ -6,6 +6,7 @@ const Op = db.Sequelize.Op
 const bcrypt = require('bcryptjs')
 const fs = require('fs')
 const crypto = require('crypto')
+const moment = require('moment')
 require('dotenv').config()
 
 // Retrieve and return all notes from the database.
@@ -104,7 +105,8 @@ exports.login = async (req, res) => {
         const payload = {
             user_id: existUsers.id,
             user_name: existUsers.name,
-            access_token: crypto.randomBytes(Math.ceil(50 / 2)).toString('hex').slice(0, 50)
+            access_token: crypto.randomBytes(Math.ceil(50 / 2)).toString('hex').slice(0, 50),
+            expired_on: moment().add('d', 1).format("YYYY-MM-DD HH:mm:ss")
         }
         const createSession = await tSession.create(payload)
         res.status(200).send({ message: "Berhasil login", result: existUsers, access_token: createSession.access_token })
@@ -137,27 +139,40 @@ exports.logout = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
+        const existUser = await users.findOne({
+            where: {
+                deleted: { [Op.eq]: 0 },
+                [Op.or]: {
+                    email: { [Op.eq]: req.body.email },
+                    phone: { [Op.eq]: req.body.phone },
+                }
+            }
+        })
+        if (existUser) {
+            return res.status(404).send({ message: "Email atau No Telepon telah terdaftar!" })
+        }
         const result = await users.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.header('x-user-id') }
+                id: { [Op.eq]: req.body.id }
             }
         })
         if (!result) {
             return res.status(404).send({ message: "Data tidak ditemukan!" })
         }
+
         const payload = {
             ...req.body,
             ...req.body.password && { password: bcrypt.hashSync(req.body.password, 8) }
         }
-        if(req.body.email !== result.email){
+        if (req.body.email !== result.email) {
             result.verified = 0
             await result.save();
         }
         const onUpdate = await users.update(payload, {
             where: {
                 deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.header('x-user-id') }
+                id: { [Op.eq]: req.body.id }
             }
         })
         res.status(200).send({ message: "Berhasil ubah data" })
