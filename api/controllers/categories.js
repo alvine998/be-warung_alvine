@@ -48,6 +48,7 @@ exports.create = async (req, res) => {
     try {
         const payload = {
             ...req.body,
+            store_id: req.header('x-store-id')
         };
         const result = await categories.create(payload)
         return res.status(200).send({
@@ -82,13 +83,7 @@ exports.update = async (req, res) => {
                 id: { [Op.eq]: req.body.id }
             }
         })
-        const results = await categories.findOne({
-            where: {
-                deleted: { [Op.eq]: 0 },
-                id: { [Op.eq]: req.body.id }
-            }
-        })
-        res.status(200).send({ message: "Berhasil ubah data", result: results, update: onUpdate })
+        res.status(200).send({ message: "Berhasil ubah data", update: onUpdate })
         return
     } catch (error) {
         console.log(error);

@@ -1,5 +1,6 @@
 const db = require('../models')
 const tSession = db.sessions
+const tStore = db.stores
 const Op = db.Sequelize.Op
 const moment = require('moment')
 exports.middlewareHere = async (req, res, next) => {
@@ -8,6 +9,12 @@ exports.middlewareHere = async (req, res, next) => {
             where: {
                 deleted: { [Op.eq]: 0 },
                 user_id: { [Op.eq]: req.header('x-user-id') }
+            }
+        })
+        const existStore = await tStore.findOne({
+            where: {
+                deleted: { [Op.eq]: 0 },
+                code_name: { [Op.eq]: req.header('x-store-id') }
             }
         })
         if (!result?.access_token) {
@@ -31,6 +38,12 @@ exports.middlewareHere = async (req, res, next) => {
         if (!req.header('x-store-id')) {
             return res.status(401).send({
                 message: "Masukkan Asal Tokomu!",
+                code: 401
+            })
+        }
+        if (!existStore) {
+            return res.status(401).send({
+                message: "Toko Tidak Terdaftar!",
                 code: 401
             })
         }
